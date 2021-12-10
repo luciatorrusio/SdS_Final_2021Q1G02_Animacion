@@ -205,13 +205,12 @@ public class carsManager : MonoBehaviour
     private void createStreet()
     {
         GameObject curr_street;
-        for(int z=0; z<NUM_LARGO; z++)
+        
+        for(int x=0; x<num_carriles; x++)
         {
-            for(int x=0; x<num_carriles; x++)
-            {
-                curr_street = Instantiate(road,new Vector3(x*dif_x, 0 , z*dif_z), road.transform.rotation);
-                curr_street.transform.parent = parentRoad.transform;
-            }
+            curr_street = Instantiate(road,new Vector3(x*dif_x, 0 , 7792), road.transform.rotation);
+            curr_street.transform.localScale = new Vector3(1, 1, 2000);
+            curr_street.transform.parent = parentRoad.transform;
         }
     }
    
