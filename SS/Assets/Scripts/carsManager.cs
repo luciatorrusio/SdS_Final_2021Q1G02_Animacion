@@ -149,7 +149,7 @@ public class carsManager : MonoBehaviour
     private void setNextPos()
     {
         string path = "Assets/output/simulation_" + index.ToString() + ".xyz";
-        print(path);
+        //print(path);
         //Read the text from directly from the test.txt file
         StreamReader reader = new StreamReader(path);
         reader.ReadLine();
