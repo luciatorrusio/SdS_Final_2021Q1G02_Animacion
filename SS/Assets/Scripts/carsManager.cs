@@ -79,44 +79,59 @@ public class carsManager : MonoBehaviour
 
     void Start()
     {
+        // cars representa la lista los autos ahora
+        // donde el key es el id y el value es toda la info del auto
         cars = new Dictionary<int, carType>();
+        // cars2 representa la lista de los autos en el proximo segundo
+        // donde el key es el id y el value es toda la info del auto
         cars2 = new Dictionary<int, carType>();
+
+        // distancia en la que tienen que estar los autos para estar uno al lado del otro en diferentes carriles 
         dif_x = 5.5f;
+        // ditantcia en la que tienen que estar los autos para estar pegados en el mimso carril
         dif_z = 7.8f;
+        // lo arriba que esta el auto
         difcar_y = 0.35f;
         getStreetSize();
         createStreet();
         index = 1;
         setInitialPos();
         setNextPos();
-        InvokeRepeating("moveCars", 1f, 1f);  //1s delay, repeat every 1s
+        InvokeRepeating("moveCars", 1f, 1f);  //1s delay, repeat every 1s TODO: esta bien el delay?
     }
     private void getStreetSize()
     {
-        string path = "Assets/output/simulation_0.xyz";
+        string path = "Assets/output/simulation_l5_q_0.3_d_0.55_lp_5_0.xyz";
         StreamReader reader = new StreamReader(path);
-        reader.ReadLine();
-        reader.ReadLine();
-        string line_filas = reader.ReadLine();
+        reader.ReadLine(); // cantidad de autos
+        reader.ReadLine(); // descripcion de cada coulmna
+        string line_filas = reader.ReadLine(); // primer auto
         string[] car = line_filas.Split(new string[] { "\t" }, System.StringSplitOptions.RemoveEmptyEntries);
+        int id = int.Parse(car[(int)Properties.ID]);
+        while(id >= 0) // descripcion de carriles cuando el id es negativo
+        {
+            line_filas = reader.ReadLine();
+            car = line_filas.Split(new string[] { "\t" }, System.StringSplitOptions.RemoveEmptyEntries);
+            id = int.Parse(car[(int)Properties.ID]);
+        }
         num_carriles = int.Parse(car[(int)Properties.CARRIL]);
         reader.Close();
     }
     private void setInitialPos()
     {
-        string path = "Assets/output/simulation_" + index.ToString() + ".xyz";
+        string path = "Assets/output/simulation_l5_q_0.3_d_0.55_lp_5_" + index.ToString() + ".xyz";
         
         //Read the text from directly from the test.txt file
         StreamReader reader = new StreamReader(path);
-        reader.ReadLine();
-        reader.ReadLine();
+        reader.ReadLine();  // cantidad de autos
+        reader.ReadLine();  // descripcion de coulmnas
         string line;
         string[] car_properties;
         int id;
         int carril;
         int posz;
         float speed;
-        line = reader.ReadLine();
+        line = reader.ReadLine(); //primer auto
         car_properties = line.Split(new string[] { "\t" }, System.StringSplitOptions.RemoveEmptyEntries);
         id = int.Parse(car_properties[(int)Properties.ID]);
         while (id >= 0)
@@ -148,7 +163,7 @@ public class carsManager : MonoBehaviour
 
     private void setNextPos()
     {
-        string path = "Assets/output/simulation_" + index.ToString() + ".xyz";
+        string path = "Assets/output/simulation_l5_q_0.3_d_0.55_lp_5_" + index.ToString() + ".xyz";
         //print(path);
         //Read the text from directly from the test.txt file
         StreamReader reader = new StreamReader(path);
@@ -160,7 +175,9 @@ public class carsManager : MonoBehaviour
         int carril;
         int posz;
         float speed;
-        line = reader.ReadLine();
+        
+        
+        line = reader.ReadLine(); //leo el primer auto
         car_properties = line.Split(new string[] { "\t" }, System.StringSplitOptions.RemoveEmptyEntries);
         id = int.Parse(car_properties[(int)Properties.ID]);
         while (id >= 0)
@@ -177,16 +194,14 @@ public class carsManager : MonoBehaviour
             cars2.Add(id, curr_car);
             if (cars.ContainsKey(id))
             {
-                carType curr_car2 = new carType();
+                carType curr_car2;
                 cars.TryGetValue(id, out curr_car2);
-                float acc = (speed * dif_z) - curr_car2.getSpeed();
-                curr_car2.setAcceleration(acc);
-                //
-                float v = curr_car.getPosz() - curr_car2.getPosz();
+
+                float v = Mathf.Sqrt( Mathf.Pow( (curr_car.getPosz() - curr_car2.getPosz()),2 )+ Mathf.Pow( (curr_car.getPosCarril() - curr_car2.getPosCarril()), 2));
                 curr_car2.setSpeed(v);
-                //
+
                 GameObject c = curr_car2.getobj();
-                c.GetComponent<move>().setAcceleration(acc);
+
                 c.GetComponent<move>().setSpeed(v);
                 c.GetComponent<move>().setNextPos(curr_car.getPosCarril(), curr_car.getPosz());
 
@@ -205,7 +220,8 @@ public class carsManager : MonoBehaviour
     private void createStreet()
     {
         GameObject curr_street;
-        
+        print("create street");
+        print("num carriles: " + num_carriles);
         for(int x=0; x<num_carriles; x++)
         {
             curr_street = Instantiate(road,new Vector3(x*dif_x, 0 , 7792), road.transform.rotation);
@@ -235,11 +251,10 @@ public class carsManager : MonoBehaviour
                 // movemos el auto
                 cars.TryGetValue(c.Key, out cart);
                 curr_carobj =  cart.getobj();
-                //curr_carobj.GetComponent<move>().setSpeed(c.Value.getSpeed());
+
                 curr_carobj.GetComponent<move>().setPos(c.Value.getPosCarril(), difcar_y, c.Value.getPosz());
                 cart.setPosCarril(c.Value.getPosCarril());
                 cart.setPosz(c.Value.getPosz());
-                //cart.setSpeed(c.Value.getSpeed());
             }
             else
             {

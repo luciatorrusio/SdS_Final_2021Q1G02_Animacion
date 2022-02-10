@@ -7,7 +7,7 @@ public class move : MonoBehaviour
     float speed;
     float acceleration;
     Vector3 target;
-    // Start is called before the first frame update
+
     void Start()
     {
         speed = 0;
@@ -18,10 +18,8 @@ public class move : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //gameObject.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, gameObject.transform.position.z + speed * Time.deltaTime + ((float)1 /(float)2) * Mathf.Pow(Time.deltaTime, 2) * acceleration );
-        //gameObject.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, gameObject.transform.position.z + speed * Time.deltaTime );
+        // el ultimo parametro es "distancia que recorre en un segundo * Time.deltaTime"
         gameObject.transform.position = Vector3.MoveTowards(gameObject.transform.position, target, speed *Time.deltaTime);
-        //speed = acceleration * Time.deltaTime + speed;
     }
     public void setSpeed(float speed )
     {
@@ -29,7 +27,6 @@ public class move : MonoBehaviour
     }
     public void setAcceleration(float acceleration)
     {
-        //print("acceleration now is " +acceleration);
         this.acceleration = acceleration;
     }
 
@@ -37,6 +34,7 @@ public class move : MonoBehaviour
     {
         gameObject.transform.position = new Vector3(x,y,z);
     }
+    
     // x = carril; z = where en el carril
     public void setNextPos(float x, float z)
     {
