@@ -224,8 +224,8 @@ public class carsManager : MonoBehaviour
         print("num carriles: " + num_carriles);
         for(int x=0; x<num_carriles; x++)
         {
-            curr_street = Instantiate(road,new Vector3(x*dif_x, 0 , 7792), road.transform.rotation);
-            curr_street.transform.localScale = new Vector3(1, 1, 2000);
+            curr_street = Instantiate(road,new Vector3(x*dif_x, 0 , 1000), road.transform.rotation);
+            curr_street.transform.localScale = new Vector3(1, 1, 500);
             curr_street.transform.parent = parentRoad.transform;
         }
     }
